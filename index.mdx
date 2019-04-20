@@ -49,9 +49,12 @@ Yuval Noah Harari
 
 ---
 
-## Storybook
+## npx
 
--   Demo
+-   create-react-app
+-   glicky
+-   cowsay
+-   [more](https://github.com/junosuarez/awesome-npx)
 
 ---
 
@@ -61,11 +64,110 @@ import Code from "mdx-code";
 
 ---
 
+import { CodeSurfer } from "mdx-deck-code-surfer";
+
+<CodeSurfer
+    title="Do you Remember..."
+    code={require("!raw-loader!./code/delay.js")}
+    lang="javascript"
+    dark={false}
+    steps={[
+        { notes: "🙈" },
+        {
+            range: [1, 7],
+            notes: "curried function, promise, template literal..."
+        },
+        { range: [9, 11], notes: "initializing tasks without executing them" }
+    ]}
+/>
+
+---
+
 export default Code;
 
-```javascript Connection Pool
-console.log("Hello World");
+```javascript
+const delay = (t, name) => () =>
+    new Promise(resolve => {
+        setTimeout(() => {
+            console.log(`done: task ${name}`);
+            resolve();
+        }, t);
+    });
+
+const task1 = delay(1000, "one");
+const task2 = delay(500, "two");
+const task3 = delay(600, "three");
 ```
+
+```javascript Playground
+Promise.all([task1(), task2()])
+    .then(() => task3())
+    .then(() => {
+        console.log("all done");
+    });
+```
+
+---
+
+<CodeSurfer
+    title="The twist"
+    code={require("!raw-loader!./code/task.js")}
+    lang="javascript"
+    dark={false}
+    steps={[
+        { notes: "🙈" },
+        {
+            lines: [1, 3, 5],
+            notes:
+                "keep track of pool id and when started it's started and finished"
+        }
+    ]}
+/>
+
+---
+
+export default Code;
+
+```javascript
+const delay = (t, name) => (poolId = 0) =>
+    new Promise(resolve => {
+        console.log(`[pool-${poolId}][t-${name}]: started`);
+        setTimeout(() => {
+            console.log(`[pool-${poolId}][t-${name}]: done`);
+            resolve();
+        }, t);
+    });
+
+const task1 = delay(1000, "one");
+const task2 = delay(500, "two");
+const task3 = delay(600, "three");
+```
+
+```javascript Playground2
+Promise.all([task1(), task2(1)])
+    .then(() => task3(1))
+    .then(() => {
+        console.log("all done");
+    });
+```
+
+---
+
+<CodeSurfer
+    title="Connection Pool"
+    code={require("!raw-loader!./code/connection.js")}
+    lang="javascript"
+    dark={false}
+    steps={[
+        { notes: "Finally!" },
+        {
+            lines: [1],
+            notes:
+                "Instantiating a connection pool with maximum 2 concurrent connections and three tasks"
+        },
+        { range: [7, 8], notes: "task three starts before task one completes" }
+    ]}
+/>
 
 ---
 
