@@ -143,7 +143,7 @@ const task2 = delay(500, "two");
 const task3 = delay(600, "three");
 ```
 
-```javascript Playground2
+```javascript Playground II
 Promise.all([task1(), task2(1)])
     .then(() => task3(1))
     .then(() => {
@@ -154,7 +154,7 @@ Promise.all([task1(), task2(1)])
 ---
 
 <CodeSurfer
-    title="Connection Pool"
+    title="Challenge: Connection Pool"
     code={require("!raw-loader!./code/connection.js")}
     lang="javascript"
     dark={false}
@@ -166,6 +166,78 @@ Promise.all([task1(), task2(1)])
                 "Instantiating a connection pool with maximum 2 concurrent connections and three tasks"
         },
         { range: [7, 8], notes: "task three starts before task one completes" }
+    ]}
+/>
+
+---
+
+export default Code;
+
+```javascript
+const delay = (t, name) => (poolId = 0) =>
+    new Promise(resolve => {
+        console.log(`[pool-${poolId}][t-${name}]: started`);
+        setTimeout(() => {
+            console.log(`[pool-${poolId}][t-${name}]: done`);
+            resolve();
+        }, t);
+    });
+
+class ConnectionPool {
+    constructor(maxPool, tasks) {
+        this.maxPool = maxPool;
+        this.tasks = tasks;
+    }
+
+    execute() {
+        const currTasks = this.tasks.splice(0, this.maxPool);
+        Promise.all(
+            currTasks.map((eachTask, idx) =>
+                eachTask(idx).then(() => this._handleNextTask(idx))
+            )
+        ).then(() => {
+            console.log("all done");
+        });
+    }
+
+    _handleNextTask(idx) {
+        if (this.tasks.length === 0) {
+            return;
+        } else {
+            const nextTask = this.tasks.splice(0, 1)[0];
+            return nextTask(idx).then(() => this._handleNextTask(idx));
+        }
+    }
+}
+```
+
+```javascript Playground III
+const task1 = delay(1000, "one");
+const task2 = delay(500, "two");
+const task3 = delay(600, "three");
+let tasks = [task1, task2, task3];
+
+const pool = new ConnectionPool(2, tasks);
+pool.execute();
+```
+
+---
+
+<CodeSurfer
+    title="Solution: Connection Pool"
+    code={require("!raw-loader!./code/solution.js")}
+    lang="javascript"
+    dark={false}
+    steps={[
+        { notes: "The Boring Solution" },
+        {
+            lines: [8],
+            notes: "splice, why not"
+        },
+        {
+            lines: [10, 11, 23],
+            notes: "chain, chain and chain"
+        }
     ]}
 />
 

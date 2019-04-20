@@ -1,4 +1,4 @@
-const pool = new ConnectionPool(2, [task1(), task2(), task3()]);
+const pool = new ConnectionPool(2, [task1, task2, task3]);
 pool.execute();
 
 //"[pool-0][t-one]: started"
