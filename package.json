@@ -1,0 +1,21 @@
+{
+    "name": "knowledge-6",
+    "version": "1.0.0",
+    "description": "Knowledge Webinar Slide",
+    "main": "index.js",
+    "scripts": {
+        "start": "mdx-deck index.mdx",
+        "build": "mdx-deck build index.mdx --no-html -d docs",
+        "test": "echo \"nah\" && exit 1"
+    },
+    "author": "Tianyuan Chu",
+    "license": "ISC",
+    "devDependencies": {
+        "mdx-deck": "^1.7.7",
+        "mdx-deck-code-surfer": "^0.5.5",
+        "raw-loader": "^0.5.1"
+    },
+    "dependencies": {
+        "mdx-code": "1.1.3"
+    }
+}
